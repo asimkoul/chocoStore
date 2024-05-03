@@ -51,17 +51,22 @@ exports.getBuyStore = (req, res, next) => {
         });
 };
 exports.postBuyStore = async (req, res, next) => {
-    const {name,chocolate,qty,price}=req.body
-    try {
-        const data=await store.create({
-            name:name,
-            chocolate:chocolate,
-            qty:qty,
-            price:price
+    const {id,name,chocolate,qty,price}=req.body
+    store.findByPk(id)
+        .then(result => {
+            if (!result) {
+                return res.status(404).json({ error: 'Store not found' });
+            }
+            result.name=name;
+            result.chocolate=chocolate;
+            result.qty=qty;
+            result.price=price
+            return result.save()
+        }).then(()=>{
+            console.log('updated')
         })
-        res.status(201).json(data)
-    } catch (error) {
-        console.log("ERROR:(",error);
-        res.status(500).json({ error: 'Failed to create Store' })
-    }
+        .catch(err => {
+            console.log("ERROR:(", err);
+            res.status(500).json({ error: 'Failed to enable edit mode' });
+        });
 };

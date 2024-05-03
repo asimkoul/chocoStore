@@ -31,16 +31,21 @@ function display(item) {
                 let item = response.data;
                 if (item.qty >= quantity) { 
                     item.qty = item.qty - quantity; 
+                   
                     axios.delete(`http://localhost:3000/store/${id}`)
                         .then(() => {
                             const userList = document.getElementById("itemList");
                             const userItem=document.getElementById(item.id)
                             userList.removeChild(userItem)
                             axios.post(`http://localhost:3000/store/`,item)
-                            display(item)
+                            .then((response)=>{
+                                display(response.data)
+                            })
+                            
                             
                         })
                         .catch((error) => console.log(error));
+                        
                 }
             })
             .catch((error) => console.log(error));
